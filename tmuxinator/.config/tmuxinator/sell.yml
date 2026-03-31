@@ -1,8 +1,8 @@
 name: sell
 root: ~/code/sell
 startup_window: terminal
-on_project_start: sudo systemctl stop mariadb
-on_project_stop: sudo systemctl start mariadb
+# on_project_start: sudo systemctl stop mariadb
+# on_project_stop: sudo systemctl start mariadb
 windows:
   - server:
       layout: tiled
@@ -22,10 +22,10 @@ windows:
   - terminal:
       layout: even-horizontal
       panes:
+        - claude:
+            - claude
         - git:
             - git status
-        - database:
-            - sleep 10 && ./vendor/bin/sail artisan tinker
   - webhooks:
       layout: even-horizontal
       panes:
