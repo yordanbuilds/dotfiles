@@ -1,6 +1,6 @@
 model = "gpt-5.5"  # Replace with your actual Azure model deployment name
 model_provider = "azure"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 personality = "pragmatic"
 
 [model_providers.azure]
@@ -23,4 +23,4 @@ command = "php"
 args = ["artisan", "boost:mcp"]
 
 [tui.model_availability_nux]
-"gpt-5.5" = 1
+"gpt-5.5" = 4

@@ -90,22 +90,13 @@
     }
   },
   "groups": {
-    "default": ["claude-opus", "codex-5.3-high", "gpt-5.4-high"],
-    "deep": [
+    "default": [
       "claude-opus",
-      "codex-5.3-xhigh",
-      "gpt-5.4-xhigh",
-      "codex-5.3-high",
-      "gpt-5.4-high"
-    ],
-    "codex": [
-      "codex-5.3-xhigh",
-      "gpt-5.4-xhigh",
-      "gpt-5.5-xhigh",
       "codex-5.3-high",
       "gpt-5.4-high",
       "gpt-5.5-high"
     ],
-    "claude": ["claude-opus", "claude-opus", "claude-sonnet"]
+    "codex": ["codex-5.3-high", "gpt-5.4-high", "gpt-5.5-high"],
+    "claude": ["claude-opus", "claude-sonnet"]
   }
 }
