@@ -10,8 +10,8 @@ windows:
       panes:
         - artisan:
             - php artisan serve
-        - vite:
-            - npm run dev
+        - cloudflared:
+            - npm run build && cloudflared tunnel --config /home/void/code/zenith/.cloudflared/config.yml run zenith
 
   - webhooks:
       layout: even-horizontal
