@@ -1,0 +1,32 @@
+# ~/.config/tmuxinator/apoynt.yml
+name: apoynt
+root: ~/code/apoynt
+startup_window: terminal
+windows:
+  - server:
+      layout: tiled
+      panes:
+        - artisan:
+            - php artisan serve
+        - vite:
+            - npm run dev
+
+  - logs:
+      layout: main-vertical
+      panes:
+        - pail:
+            - php artisan pail
+
+  - workers:
+      layout: even-horizontal
+      panes:
+        - queues:
+            - php artisan queue:work
+        - scheduler:
+            - php artisan schedule:work
+
+  - terminal:
+      layout: main-vertical
+      panes:
+        - terminal:
+            - git status

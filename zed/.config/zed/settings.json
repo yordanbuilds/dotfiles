@@ -10,10 +10,16 @@
   "agent": {
     "dock": "right",
     "favorite_models": [],
-    "model_parameters": []
+    "model_parameters": [],
+  },
+  "agent_servers": {
+    "OpenCode": {
+      "command": "opencode",
+      "args": ["acp"],
+    },
   },
   "git_panel": {
-    "dock": "left"
+    "dock": "left",
   },
   "word_diff_enabled": true,
   "cursor_shape": "block",
