@@ -146,3 +146,7 @@ if [ -f "$KDENLIVERC" ]; then
   fi
   sed -i "s/^window_background=.*/window_background=$gray,$gray,$gray/" "$KDENLIVERC"
 fi
+
+# >>> omazed hook - do not edit >>>
+omazed set "$1"
+# <<< omazed hook - do not edit <<<
