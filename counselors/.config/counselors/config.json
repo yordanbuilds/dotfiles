@@ -16,6 +16,14 @@
       },
       "extraFlags": ["--model", "opus"]
     },
+    "claude-opus-4-6": {
+      "binary": "/home/void/.local/bin/claude",
+      "adapter": "claude",
+      "readOnly": {
+        "level": "enforced"
+      },
+      "extraFlags": ["--model", "claude-opus-4-6"]
+    },
     "claude-sonnet": {
       "binary": "/home/void/.local/bin/claude",
       "adapter": "claude",
@@ -97,6 +105,6 @@
       "gpt-5.5-high"
     ],
     "codex": ["codex-5.3-high", "gpt-5.4-high", "gpt-5.5-high"],
-    "claude": ["claude-opus", "claude-sonnet"]
+    "claude": ["claude-opus", "claude-sonnet", "claude-opus-4.6"]
   }
 }
