@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # hstack — launch a project workspace stack in Herdr (tmuxinator replacement).
-# Usage: hstack <sell|apoynt> [-b|--background]
+# Usage: hstack <sell|apoynt|smilepoint|zenith> [-b|--background]
 #   -b  build the workspace without switching focus to it
 set -euo pipefail
 
@@ -57,7 +57,7 @@ stack_sell() {
   # herdr wait output also matches existing scrollback, so an unquoted echo
   # would trigger the dependent panes instantly.
   pane_start "$PANE" sail './vendor/bin/sail up -d && echo SAIL_"READY"'
-  gate="herdr wait output $PANE --match SAIL_READY --timeout 120000"
+  gate="herdr wait output $PANE --match SAIL_READY --timeout 120000 >/dev/null 2>&1"
   p=$(pane_split "$PANE" right)
   pane_start "$p" vite "$gate; ./vendor/bin/sail npm run build && cloudflared tunnel run sell-dev"
 
@@ -66,16 +66,58 @@ stack_sell() {
   p=$(pane_split "$PANE" right)
   pane_start "$p" scheduler "$gate; ./vendor/bin/sail artisan schedule:work"
 
+  tab_create "$root" stripe
+  pane_start "$PANE" stripe "stripe listen --api-key sk_test --forward-to localhost/stripe/webhook-connect"
+
   tab_create "$root" terminal
   TERMINAL_TAB=$TAB
-  pane_start "$PANE" claude "claude"
-  p=$(pane_split "$PANE" right)
-  pane_start "$p" git "git status"
+}
 
-  tab_create "$root" webhooks
-  pane_start "$PANE" stripe "stripe listen --api-key sk_test --forward-to localhost/stripe/webhook-connect"
+stack_smilepoint() {
+  local root="$HOME/code/smilepoint" p
+  ws_create "$root" smilepoint
+
+  tab_rename server
+  pane_start "$PANE" artisan "php artisan serve"
   p=$(pane_split "$PANE" right)
-  pane_start "$p" ngrok "ngrok http 80"
+  pane_start "$p" vite "npm run dev"
+
+  tab_create "$root" logs
+  pane_start "$PANE" pail "php artisan pail"
+
+  tab_create "$root" workers
+  pane_start "$PANE" queues "php artisan queue:work"
+  p=$(pane_split "$PANE" right)
+  pane_start "$p" scheduler "php artisan schedule:work"
+
+  tab_create "$root" terminal
+  TERMINAL_TAB=$TAB
+}
+
+stack_zenith() {
+  local root="$HOME/code/zenith" p
+  # tmuxinator on_project_start hook; runs here so sudo can prompt for a password
+  sudo systemctl start mssql-server || die "could not start mssql-server"
+  ws_create "$root" zenith
+
+  tab_rename server
+  pane_start "$PANE" artisan "php artisan serve"
+  p=$(pane_split "$PANE" right)
+  pane_start "$p" cloudflared "npm run build && cloudflared tunnel --config $HOME/code/zenith/.cloudflared/config.yml run zenith"
+
+  tab_create "$root" stripe
+  pane_start "$PANE" stripe "stripe listen --forward-to localhost:8000/stripe/webhook"
+
+  tab_create "$root" logs
+  pane_start "$PANE" pail "php artisan pail"
+
+  tab_create "$root" workers
+  pane_start "$PANE" queues "php artisan queue:work"
+  p=$(pane_split "$PANE" right)
+  pane_start "$p" scheduler "php artisan schedule:work"
+
+  tab_create "$root" terminal
+  TERMINAL_TAB=$TAB
 }
 
 stack_apoynt() {
@@ -96,7 +138,6 @@ stack_apoynt() {
 
   tab_create "$root" terminal
   TERMINAL_TAB=$TAB
-  pane_start "$PANE" terminal "git status"
 }
 
 # --- main --------------------------------------------------------------------
@@ -111,9 +152,9 @@ for arg in "$@"; do
 done
 
 case "$project" in
-  sell|apoynt) ;;
-  "") die "usage: hstack <sell|apoynt> [-b|--background]" ;;
-  *) die "unknown project: $project (available: sell, apoynt)" ;;
+  sell|apoynt|smilepoint|zenith) ;;
+  "") die "usage: hstack <sell|apoynt|smilepoint|zenith> [-b|--background]" ;;
+  *) die "unknown project: $project (available: sell, apoynt, smilepoint, zenith)" ;;
 esac
 
 ws_exists "$project" && die "workspace '$project' already exists — switch to it with prefix+w"
@@ -125,5 +166,12 @@ if [[ $background -eq 0 ]]; then
   herdr workspace focus "$WS" >/dev/null
   [[ -n "$TERMINAL_TAB" ]] && herdr tab focus "$TERMINAL_TAB" >/dev/null
 else
-  echo "  (background — switch with prefix+w)"
+  # make terminal the workspace's active tab, then bounce focus straight back;
+  # tab focus always steals the view — there is no background variant
+  cur=$(herdr workspace list | jq -r '.result.workspaces[] | select(.focused) | .active_tab_id // empty')
+  if [[ -n "$TERMINAL_TAB" ]]; then
+    herdr tab focus "$TERMINAL_TAB" >/dev/null
+    [[ -n "$cur" ]] && herdr tab focus "$cur" >/dev/null
+  fi
+  echo "  (background — Alt+Shift+↑/↓ to switch)"
 fi
