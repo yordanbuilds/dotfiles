@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+# hstack — launch a project workspace stack in Herdr (tmuxinator replacement).
+# Usage: hstack <sell|apoynt> [-b|--background]
+#   -b  build the workspace without switching focus to it
+set -euo pipefail
+
+die() { echo "hstack: $*" >&2; exit 1; }
+
+command -v jq >/dev/null || die "jq is required"
+command -v herdr >/dev/null || die "herdr not found in PATH"
+herdr workspace list >/dev/null 2>&1 || die "no running Herdr server — start herdr first"
+
+# --- herdr helpers -----------------------------------------------------------
+# ws_create/tab_create set WS, TAB, PANE from the JSON response.
+WS="" TAB="" PANE="" TERMINAL_TAB=""
+
+ws_create() { # <cwd> <label>
+  local out
+  out=$(herdr workspace create --cwd "$1" --label "$2" --no-focus)
+  WS=$(jq -r '.result.workspace.workspace_id' <<<"$out")
+  TAB=$(jq -r '.result.tab.tab_id' <<<"$out")
+  PANE=$(jq -r '.result.root_pane.pane_id' <<<"$out")
+}
+
+tab_create() { # <cwd> <label>
+  local out
+  out=$(herdr tab create --workspace "$WS" --cwd "$1" --label "$2" --no-focus)
+  TAB=$(jq -r '.result.tab.tab_id' <<<"$out")
+  PANE=$(jq -r '.result.root_pane.pane_id' <<<"$out")
+  echo "==> $2"
+}
+
+tab_rename() { herdr tab rename "$TAB" "$1" >/dev/null; echo "==> $1"; }
+
+pane_split() { # <pane> <right|down> [ratio] -> new pane id on stdout
+  local args=("$1" --direction "$2" --no-focus)
+  [[ -n "${3:-}" ]] && args+=(--ratio "$3")
+  herdr pane split "${args[@]}" | jq -r '.result.pane.pane_id'
+}
+
+pane_start() { # <pane> <label> <command>
+  herdr pane rename "$1" "$2" >/dev/null
+  herdr pane run "$1" "$3"
+  echo "    $2: $3"
+}
+
+ws_exists() { herdr workspace list | jq -r '.result.workspaces[].label' | grep -Fxq "$1"; }
+
+# --- project stacks ----------------------------------------------------------
+
+stack_sell() {
+  local root="$HOME/code/sell" p gate
+  ws_create "$root" sell
+
+  tab_rename server
+  # SAIL_"READY" keeps the literal match text out of the typed command line;
+  # herdr wait output also matches existing scrollback, so an unquoted echo
+  # would trigger the dependent panes instantly.
+  pane_start "$PANE" sail './vendor/bin/sail up -d && echo SAIL_"READY"'
+  gate="herdr wait output $PANE --match SAIL_READY --timeout 120000"
+  p=$(pane_split "$PANE" right)
+  pane_start "$p" vite "$gate; ./vendor/bin/sail npm run build && cloudflared tunnel run sell-dev"
+
+  tab_create "$root" workers
+  pane_start "$PANE" queues "$gate; ./vendor/bin/sail artisan queue:work"
+  p=$(pane_split "$PANE" right)
+  pane_start "$p" scheduler "$gate; ./vendor/bin/sail artisan schedule:work"
+
+  tab_create "$root" terminal
+  TERMINAL_TAB=$TAB
+  pane_start "$PANE" claude "claude"
+  p=$(pane_split "$PANE" right)
+  pane_start "$p" git "git status"
+
+  tab_create "$root" webhooks
+  pane_start "$PANE" stripe "stripe listen --api-key sk_test --forward-to localhost/stripe/webhook-connect"
+  p=$(pane_split "$PANE" right)
+  pane_start "$p" ngrok "ngrok http 80"
+}
+
+stack_apoynt() {
+  local root="$HOME/code/apoynt" p p2
+  ws_create "$root" apoynt
+
+  tab_rename server
+  pane_start "$PANE" artisan "php artisan serve"
+  p=$(pane_split "$PANE" right)
+  pane_start "$p" vite "npm run dev"
+
+  tab_create "$root" workers
+  pane_start "$PANE" queues "php artisan queue:work"
+  p=$(pane_split "$PANE" right 0.333)
+  pane_start "$p" scheduler "php artisan schedule:work"
+  p2=$(pane_split "$p" right 0.5)
+  pane_start "$p2" reverb "php artisan reverb:start"
+
+  tab_create "$root" terminal
+  TERMINAL_TAB=$TAB
+  pane_start "$PANE" terminal "git status"
+}
+
+# --- main --------------------------------------------------------------------
+
+project="" background=0
+for arg in "$@"; do
+  case "$arg" in
+    -b|--background) background=1 ;;
+    -*) die "unknown flag: $arg" ;;
+    *) project="$arg" ;;
+  esac
+done
+
+case "$project" in
+  sell|apoynt) ;;
+  "") die "usage: hstack <sell|apoynt> [-b|--background]" ;;
+  *) die "unknown project: $project (available: sell, apoynt)" ;;
+esac
+
+ws_exists "$project" && die "workspace '$project' already exists — switch to it with prefix+w"
+
+"stack_$project"
+
+echo "✓ $project stack ready ($WS)"
+if [[ $background -eq 0 ]]; then
+  herdr workspace focus "$WS" >/dev/null
+  [[ -n "$TERMINAL_TAB" ]] && herdr tab focus "$TERMINAL_TAB" >/dev/null
+else
+  echo "  (background — switch with prefix+w)"
+fi
