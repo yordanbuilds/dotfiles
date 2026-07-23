@@ -24,6 +24,8 @@ windows:
             - php artisan queue:work
         - scheduler:
             - php artisan schedule:work
+        - reverb:
+            - php artisan reverb:start
 
   - terminal:
       layout: main-vertical

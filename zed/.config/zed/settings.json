@@ -7,15 +7,18 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "debugger": {
+    "button": false,
+  },
+  "cli_default_open_behavior": "existing_window",
   "agent": {
     "dock": "right",
     "favorite_models": [],
     "model_parameters": [],
   },
   "agent_servers": {
-    "OpenCode": {
-      "command": "opencode",
-      "args": ["acp"],
+    "opencode": {
+      "type": "registry",
     },
   },
   "git_panel": {
@@ -37,12 +40,15 @@
     "quick_actions": false,
   },
   "project_panel": {
+    "button": false,
     "dock": "right",
   },
   "collaboration_panel": {
+    "button": false,
     "dock": "right",
   },
   "outline_panel": {
+    "button": false,
     "dock": "right",
   },
   "ui_font_size": 16,

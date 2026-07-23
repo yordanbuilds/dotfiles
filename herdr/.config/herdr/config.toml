@@ -1,3 +1,4 @@
+onboarding = false
 # Herdr config — stowed from ~/dotfiles/herdr/
 # Keybindings aligned with tmux muscle memory (prefix ctrl+a, | split, r reload);
 # detach stays on default prefix+q by choice.
@@ -9,6 +10,7 @@ auto_switch = false
 [ui]
 show_agent_labels_on_pane_borders = true
 
+agent_panel_sort = "priority"
 [ui.toast]
 delivery = "off"
 
