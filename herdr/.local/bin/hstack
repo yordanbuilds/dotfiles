@@ -136,6 +136,9 @@ stack_apoynt() {
   p2=$(pane_split "$p" right 0.5)
   pane_start "$p2" reverb "php artisan reverb:start"
 
+  tab_create "$root" claude
+  pane_start "$PANE" claude "claude"
+
   tab_create "$root" terminal
   TERMINAL_TAB=$TAB
 }

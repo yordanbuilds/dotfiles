@@ -1,0 +1,14 @@
+# Herdr saves its workspace layout to ~/.config/herdr/session.json and
+# restores it whenever the server starts. After a reboot the restored
+# workspaces are empty shells (processes are gone), so wipe the file once
+# per login. A server that survived (no reboot) holds its state in memory
+# and rewrites the file on change, so the wipe never touches live work.
+[Unit]
+Description=Clear Herdr's saved workspace layout from the previous boot
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rm -f %h/.config/herdr/session.json
+
+[Install]
+WantedBy=default.target
