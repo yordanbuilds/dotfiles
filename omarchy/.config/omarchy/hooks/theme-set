@@ -147,6 +147,226 @@ if [ -f "$KDENLIVERC" ]; then
   sed -i "s/^window_background=.*/window_background=$gray,$gray,$gray/" "$KDENLIVERC"
 fi
 
+# --- Sync tuicr theme ---
+# Maps omarchy themes to tuicr's bundled equivalents where they exist,
+# and generates local tuicr themes from colors.toml for the rest
+# (written to ~/.config/tuicr/themes/omarchy-<slug>.toml).
+# tuicr reads its config at startup, so new sessions pick up the change.
+
+TUICR_DIR="$HOME/.config/tuicr"
+TUICR_THEMES_DIR="$TUICR_DIR/themes"
+TUICR_CONFIG="$TUICR_DIR/config.toml"
+
+tuicr_bundled() {
+  case "$1" in
+    catppuccin) echo "catppuccin-mocha" ;;
+    catppuccin-latte) echo "catppuccin-latte" ;;
+    everforest) echo "everforest-dark" ;;
+    gruvbox) echo "gruvbox-dark" ;;
+    nord) echo "nord-dark" ;;
+    tokyo-night) echo "tokyo-night-storm" ;;
+  esac
+}
+
+read_theme_color() {
+  grep -m1 "^$2 " "$1/colors.toml" | sed 's/.*"\(#[^"]*\)".*/\1/'
+}
+
+# Mix $1 toward $2, keeping $3% of $1
+mix_colors() {
+  local a="${1#\#}" b="${2#\#}" p="$3"
+  a="${a,,}" b="${b,,}"
+  printf "#%02x%02x%02x" \
+    $(((16#${a:0:2} * p + 16#${b:0:2} * (100 - p)) / 100)) \
+    $(((16#${a:2:2} * p + 16#${b:2:2} * (100 - p)) / 100)) \
+    $(((16#${a:4:2} * p + 16#${b:4:2} * (100 - p)) / 100))
+}
+
+# $1 = omarchy theme dir, $2 = output file
+tuicr_generate() {
+  local dir="$1" out="$2"
+  local bg fg accent cursor c1 c2 c3 c4 c5 c6
+
+  bg=$(read_theme_color "$dir" background)
+  fg=$(read_theme_color "$dir" foreground)
+  accent=$(read_theme_color "$dir" accent)
+  cursor=$(read_theme_color "$dir" cursor)
+  c1=$(read_theme_color "$dir" color1)
+  c2=$(read_theme_color "$dir" color2)
+  c3=$(read_theme_color "$dir" color3)
+  c4=$(read_theme_color "$dir" color4)
+  c5=$(read_theme_color "$dir" color5)
+  c6=$(read_theme_color "$dir" color6)
+
+  [ -n "$bg" ] && [ -n "$fg" ] || return 1
+  accent="${accent:-$c4}"
+  cursor="${cursor:-$fg}"
+
+  cat >"$out" <<EOF
+# Generated from omarchy theme '$(basename "$dir")' by the theme-set hook - do not edit
+
+panel_bg = "$bg"
+bg_highlight = "$(mix_colors "$fg" "$bg" 12)"
+fg_primary = "$fg"
+fg_secondary = "$(mix_colors "$fg" "$bg" 70)"
+fg_dim = "$(mix_colors "$fg" "$bg" 45)"
+diff_add = "$c2"
+diff_add_bg = "$(mix_colors "$c2" "$bg" 18)"
+diff_del = "$c1"
+diff_del_bg = "$(mix_colors "$c1" "$bg" 18)"
+diff_context = "$fg"
+diff_hunk_header = "$c4"
+expanded_context_fg = "$(mix_colors "$fg" "$bg" 45)"
+syntax_add_bg = "$(mix_colors "$c2" "$bg" 18)"
+syntax_del_bg = "$(mix_colors "$c1" "$bg" 18)"
+file_added = "$c2"
+file_modified = "$c3"
+file_deleted = "$c1"
+file_renamed = "$c5"
+reviewed = "$c2"
+pending = "$c3"
+comment_note = "$c4"
+comment_suggestion = "$c6"
+comment_issue = "$c1"
+comment_praise = "$c2"
+border_focused = "$accent"
+border_unfocused = "$(mix_colors "$fg" "$bg" 25)"
+status_bar_bg = "$(mix_colors "$fg" "$bg" 8)"
+cursor_color = "$cursor"
+cursor_line_bg = "$(mix_colors "$fg" "$bg" 10)"
+branch_name = "$c5"
+help_indicator = "$(mix_colors "$fg" "$bg" 45)"
+message_info_fg = "$bg"
+message_info_bg = "$c4"
+message_warning_fg = "$bg"
+message_warning_bg = "$c3"
+message_error_fg = "$bg"
+message_error_bg = "$c1"
+update_badge_fg = "$bg"
+update_badge_bg = "$c3"
+mode_fg = "$bg"
+mode_bg = "$accent"
+EOF
+}
+
+mkdir -p "$TUICR_THEMES_DIR"
+
+# Regenerate local themes for every installed omarchy theme without a bundled match,
+# so they stay available for manual `tuicr --theme` use
+for dir in "$HOME/.local/share/omarchy/themes"/*/ "$HOME/.config/omarchy/themes"/*/; do
+  [ -f "$dir/colors.toml" ] || continue
+  slug=$(basename "$dir")
+  [ -n "$(tuicr_bundled "$slug")" ] && continue
+  tuicr_generate "$dir" "$TUICR_THEMES_DIR/omarchy-$slug.toml"
+done
+
+# Point tuicr at the theme just set
+tuicr_theme=$(tuicr_bundled "$1")
+if [ -z "$tuicr_theme" ]; then
+  tuicr_theme="omarchy-$1"
+  # Current dir includes user overlays, so regenerate the active theme from it
+  tuicr_generate "$THEME_DIR" "$TUICR_THEMES_DIR/$tuicr_theme.toml"
+fi
+
+if [ -s "$TUICR_CONFIG" ]; then
+  if grep -q '^theme *= ' "$TUICR_CONFIG"; then
+    sed -i "s/^theme *= .*/theme = \"$tuicr_theme\"/" "$TUICR_CONFIG"
+  else
+    sed -i "1i theme = \"$tuicr_theme\"" "$TUICR_CONFIG"
+  fi
+else
+  echo "theme = \"$tuicr_theme\"" >"$TUICR_CONFIG"
+fi
+
+# --- Sync herdr theme ---
+# Maps omarchy themes to herdr's built-in equivalents where they exist;
+# otherwise generates a [theme.custom] token-override block from colors.toml.
+# Herdr has no separate theme files, so the hook owns a marked block at the
+# end of config.toml. Written via cat > to preserve the stow symlink.
+
+HERDR_CONFIG="$HOME/.config/herdr/config.toml"
+HERDR_BLOCK_START="# >>> omarchy theme sync - do not edit >>>"
+HERDR_BLOCK_END="# <<< omarchy theme sync - do not edit <<<"
+
+herdr_builtin() {
+  case "$1" in
+    catppuccin) echo "catppuccin" ;;
+    catppuccin-latte) echo "catppuccin-latte" ;;
+    gruvbox) echo "gruvbox" ;;
+    kanagawa) echo "kanagawa" ;;
+    nord) echo "nord" ;;
+    rose-pine) echo "rose-pine-dawn" ;;
+    tokyo-night) echo "tokyo-night" ;;
+  esac
+}
+
+# $1 = omarchy theme dir; emits a full [theme] block with custom token overrides
+herdr_custom_block() {
+  local dir="$1"
+  local bg fg accent c1 c2 c3 c4 c5 c6 base
+
+  bg=$(read_theme_color "$dir" background)
+  fg=$(read_theme_color "$dir" foreground)
+  accent=$(read_theme_color "$dir" accent)
+  c1=$(read_theme_color "$dir" color1)
+  c2=$(read_theme_color "$dir" color2)
+  c3=$(read_theme_color "$dir" color3)
+  c4=$(read_theme_color "$dir" color4)
+  c5=$(read_theme_color "$dir" color5)
+  c6=$(read_theme_color "$dir" color6)
+
+  [ -n "$bg" ] && [ -n "$fg" ] || return 1
+  accent="${accent:-$c4}"
+
+  base="catppuccin"
+  [ -f "$dir/light.mode" ] && base="catppuccin-latte"
+
+  cat <<EOF
+[theme]
+name = "$base"
+auto_switch = false
+
+[theme.custom]
+accent = "$accent"
+panel_bg = "$(mix_colors "#000000" "$bg" 12)"
+surface_dim = "$(mix_colors "$fg" "$bg" 6)"
+surface0 = "$(mix_colors "$fg" "$bg" 10)"
+surface1 = "$(mix_colors "$fg" "$bg" 16)"
+overlay0 = "$(mix_colors "$fg" "$bg" 30)"
+overlay1 = "$(mix_colors "$fg" "$bg" 40)"
+text = "$fg"
+subtext0 = "$(mix_colors "$fg" "$bg" 65)"
+red = "$c1"
+green = "$c2"
+yellow = "$c3"
+blue = "$c4"
+mauve = "$c5"
+teal = "$c6"
+peach = "$(mix_colors "$c1" "$c3" 50)"
+EOF
+}
+
+if [ -f "$HERDR_CONFIG" ]; then
+  herdr_name=$(herdr_builtin "$1")
+  if [ -n "$herdr_name" ]; then
+    herdr_block=$(printf '[theme]\nname = "%s"\nauto_switch = false\n' "$herdr_name")
+  else
+    herdr_block=$(herdr_custom_block "$THEME_DIR")
+  fi
+
+  if [ -n "$herdr_block" ]; then
+    # Drop the previous managed block, then append the new one at the end
+    # ($(...) strips trailing blank lines, so this stays idempotent)
+    herdr_rest=$(awk -v s="$HERDR_BLOCK_START" -v e="$HERDR_BLOCK_END" \
+      '$0 == s {skip = 1; next} $0 == e {skip = 0; next} !skip' "$HERDR_CONFIG")
+    printf '%s\n\n%s\n%s\n%s\n' \
+      "$herdr_rest" "$HERDR_BLOCK_START" "$herdr_block" "$HERDR_BLOCK_END" >"$HERDR_CONFIG"
+
+    # Recolor a running herdr server live (no-op when none is running)
+    herdr server reload-config >/dev/null 2>&1
+  fi
+fi
+
 # >>> omazed hook - do not edit >>>
 omazed set "$1"
 # <<< omazed hook - do not edit <<<

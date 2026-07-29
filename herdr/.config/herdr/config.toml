@@ -2,10 +2,8 @@ onboarding = false
 # Herdr config — stowed from ~/dotfiles/herdr/
 # Keybindings aligned with tmux muscle memory (prefix ctrl+a, | split, r reload);
 # detach stays on default prefix+q by choice.
-
-[theme]
-name = "rose-pine-dawn"
-auto_switch = false
+# [theme] lives in the marked block at the end of this file, managed by the
+# omarchy theme-set hook (~/dotfiles/omarchy/.config/omarchy/hooks/theme-set).
 
 [ui]
 show_agent_labels_on_pane_borders = true
@@ -56,3 +54,9 @@ type = "popup"
 command = "fish"
 width = "80%"
 height = "80%"
+
+# >>> omarchy theme sync - do not edit >>>
+[theme]
+name = "rose-pine-dawn"
+auto_switch = false
+# <<< omarchy theme sync - do not edit <<<
