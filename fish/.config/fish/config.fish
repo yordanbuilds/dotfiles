@@ -108,10 +108,6 @@ alias mux="tmuxinator"
 alias muxs="tmuxinator start"
 alias muxe="tmuxinator edit"
 
-### DISK MANAGEMENT ###
-alias disk1='udisksctl mount -b /dev/sda1'
-alias disk2='udisksctl mount -b /dev/sda2'
-
 ### SHELL SWITCHING ###
 alias tobash="sudo chsh $USER -s /bin/bash && echo 'Now log out.'"
 alias tozsh="sudo chsh $USER -s /bin/zsh && echo 'Now log out.'"
