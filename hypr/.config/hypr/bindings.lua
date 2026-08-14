@@ -8,6 +8,8 @@ hl.unbind("SUPER + G")              -- was: Toggle window grouping -> GitHub
 hl.unbind("SUPER + S")              -- was: Toggle scratchpad -> Screenshot (edit)
 hl.unbind("SUPER + SHIFT + S")      -- was: Google Maps -> Screenshot (clipboard)
 hl.unbind("SUPER + P")              -- was: Pseudo window -> PhpStorm
+hl.unbind("SUPER + C")              -- was: Universal copy -> Calendar
+hl.unbind("SUPER + X")              -- was: Universal cut -> X
 hl.unbind("SUPER + SHIFT + X")      -- was: X -> X Post
 hl.unbind("SUPER + SHIFT + B")      -- was: Browser -> Browser (private)
 hl.unbind("SUPER + SHIFT + RETURN") -- was: Browser -> app launcher
