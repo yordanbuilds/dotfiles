@@ -19,7 +19,7 @@ o.bind("SUPER + F", "File manager", { omarchy = "nautilus" })
 o.bind("SUPER + B", "Browser", { omarchy = "browser" })
 o.bind("SUPER + SHIFT + B", "Browser (private)", { omarchy = "browser --private" })
 o.bind("SUPER + P", "PhpStorm", { launch = os.getenv("HOME") .. "/.local/share/JetBrains/Toolbox/apps/phpstorm/bin/phpstorm.sh" })
-o.bind("SUPER + SHIFT + RETURN", "Launch apps", "omarchy-menu toggle apps")
+o.bind("SUPER + SHIFT + RETURN", "Omarchy menu", "omarchy-menu toggle")
 
 -- Web apps
 o.bind("SUPER + G", "GitHub", { webapp = "https://github.com" })
@@ -37,10 +37,6 @@ o.bind(
   [[bash -c 'F=$(omarchy-capture-screenshot region save) && tensaku-edit "$F"']]
 )
 o.bind("SUPER + SHIFT + S", "Screenshot region (clipboard)", "omarchy-capture-screenshot region copy")
-
--- Root menu also on SUPER+SHIFT+SPACE (displaces bar toggle; still in toggles menu)
-hl.unbind("SUPER + SHIFT + SPACE") -- was: Toggle top bar
-o.bind("SUPER + SHIFT + SPACE", "Omarchy menu", "omarchy-menu toggle")
 
 -- Workspaces and fullscreen
 o.bind("SUPER + Q", "Previous workspace", hl.dsp.focus({ workspace = "previous" }))
