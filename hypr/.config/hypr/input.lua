@@ -3,8 +3,12 @@
 
 hl.config({
   input = {
+    -- English + Bulgarian (traditional phonetic); toggle with Alt + Space.
+    kb_layout = "us,bg",
+    kb_variant = ",phonetic",
+
     -- Compose key on Caps Lock.
-    kb_options = "compose:caps",
+    kb_options = "compose:caps,grp:alt_space_toggle",
 
     -- Faster scrolling.
     scroll_factor = 2.0,
