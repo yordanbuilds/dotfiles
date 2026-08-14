@@ -367,6 +367,41 @@ if [ -f "$HERDR_CONFIG" ]; then
   fi
 fi
 
+# --- v3 compat shims for tools reading the old theme format (e.g. omazed) ---
+# v4 renamed colorN keys to named colors and replaced the light.mode marker
+# file with a `mode` key. The current theme dir is rebuilt on every theme set,
+# so these are re-applied each time.
+
+if ! grep -q '^color1 ' "$THEME_DIR/colors.toml" 2>/dev/null; then
+  cat >>"$THEME_DIR/colors.toml" <<EOF
+
+# v3-compat aliases (appended by theme-set hook)
+color0 = "$(get_color dark_background)"
+color1 = "$(get_color red)"
+color2 = "$(get_color green)"
+color3 = "$(get_color yellow)"
+color4 = "$(get_color blue)"
+color5 = "$(get_color magenta)"
+color6 = "$(get_color cyan)"
+color7 = "$fg"
+color8 = "$(get_color light_foreground)"
+color9 = "$(get_color bright_red)"
+color10 = "$(get_color bright_green)"
+color11 = "$(get_color bright_yellow)"
+color12 = "$(get_color bright_blue)"
+color13 = "$(get_color bright_magenta)"
+color14 = "$(get_color bright_cyan)"
+color15 = "$(get_color bright_foreground)"
+cursor = "$fg"
+EOF
+fi
+
+if $is_light; then
+  touch "$THEME_DIR/light.mode"
+else
+  rm -f "$THEME_DIR/light.mode"
+fi
+
 # >>> omazed hook - do not edit >>>
 omazed set "$1"
 # <<< omazed hook - do not edit <<<
