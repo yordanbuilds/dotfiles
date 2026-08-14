@@ -38,6 +38,10 @@ o.bind(
 )
 o.bind("SUPER + SHIFT + S", "Screenshot region (clipboard)", "omarchy-capture-screenshot region copy")
 
+-- Root menu also on SUPER+SHIFT+SPACE (displaces bar toggle; still in toggles menu)
+hl.unbind("SUPER + SHIFT + SPACE") -- was: Toggle top bar
+o.bind("SUPER + SHIFT + SPACE", "Omarchy menu", "omarchy-menu toggle")
+
 -- Workspaces and fullscreen
 o.bind("SUPER + Q", "Previous workspace", hl.dsp.focus({ workspace = "previous" }))
 o.bind("SUPER + SHIFT + F", "Full screen", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
