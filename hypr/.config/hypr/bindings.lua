@@ -19,7 +19,7 @@ o.bind("SUPER + F", "File manager", { omarchy = "nautilus" })
 o.bind("SUPER + B", "Browser", { omarchy = "browser" })
 o.bind("SUPER + SHIFT + B", "Browser (private)", { omarchy = "browser --private" })
 o.bind("SUPER + P", "PhpStorm", { launch = os.getenv("HOME") .. "/.local/share/JetBrains/Toolbox/apps/phpstorm/bin/phpstorm.sh" })
-o.bind("SUPER + SHIFT + RETURN", "Launch apps", "walker -p 'Start…'")
+o.bind("SUPER + SHIFT + RETURN", "Launch apps", "omarchy-menu toggle apps")
 
 -- Web apps
 o.bind("SUPER + G", "GitHub", { webapp = "https://github.com" })

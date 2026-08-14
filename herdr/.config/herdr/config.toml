@@ -57,24 +57,6 @@ height = "80%"
 
 # >>> omarchy theme sync - do not edit >>>
 [theme]
-name = "catppuccin"
+name = "rose-pine-dawn"
 auto_switch = false
-
-[theme.custom]
-accent = "#f38d70"
-panel_bg = "#262020"
-surface_dim = "#372f2f"
-surface0 = "#3e3737"
-surface1 = "#494142"
-overlay0 = "#635b5b"
-overlay1 = "#766d6d"
-text = "#e6d9db"
-subtext0 = "#a49a9b"
-red = "#fd6883"
-green = "#adda78"
-yellow = "#f9cc6c"
-blue = "#f38d70"
-mauve = "#a8a9eb"
-teal = "#85dacc"
-peach = "#fb9a77"
 # <<< omarchy theme sync - do not edit <<<
