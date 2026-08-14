@@ -30,11 +30,11 @@ o.bind("SUPER + Y", "YouTube", { webapp = "https://youtube.com/" })
 o.bind("SUPER + X", "X", { webapp = "https://x.com/" })
 o.bind("SUPER + SHIFT + X", "X Post", { webapp = "https://x.com/compose/post" })
 
--- Screenshots (region; edit with satty / straight to clipboard)
+-- Screenshots (region; edit with tensaku / straight to clipboard)
 o.bind(
   "SUPER + S",
   "Screenshot region (edit)",
-  [[bash -c 'F=$(omarchy-capture-screenshot region save) && satty --filename "$F" --output-filename "$F" --actions-on-enter save-to-clipboard --save-after-copy --copy-command wl-copy']]
+  [[bash -c 'F=$(omarchy-capture-screenshot region save) && tensaku-edit "$F"']]
 )
 o.bind("SUPER + SHIFT + S", "Screenshot region (clipboard)", "omarchy-capture-screenshot region copy")
 
