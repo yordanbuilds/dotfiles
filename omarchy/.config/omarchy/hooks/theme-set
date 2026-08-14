@@ -5,7 +5,7 @@
 # so apps like Kdenlive follow the light/dark theme switch.
 # Note: Running Qt apps need a restart to pick up changes.
 
-THEME_DIR="$HOME/.config/omarchy/current/theme"
+THEME_DIR="$HOME/.local/state/omarchy/current/theme"
 QT6CT_COLORS_DIR="$HOME/.config/qt6ct/colors"
 QT6CT_CONF="$HOME/.config/qt6ct/qt6ct.conf"
 KDENLIVERC="$HOME/.config/kdenliverc"
@@ -48,10 +48,10 @@ contrast_text() {
 bg=$(get_color background)
 fg=$(get_color foreground)
 accent=$(get_color accent)
-color5=$(get_color color5)
+color5=$(get_color magenta)
 
 is_light=false
-[ -f "$THEME_DIR/light.mode" ] && is_light=true
+grep -q '^mode *= *"light"' "$THEME_DIR/colors.toml" && is_light=true
 
 qt_bg=$(to_qt "$bg")
 qt_fg=$(to_qt "$fg")
@@ -191,12 +191,12 @@ tuicr_generate() {
   fg=$(read_theme_color "$dir" foreground)
   accent=$(read_theme_color "$dir" accent)
   cursor=$(read_theme_color "$dir" cursor)
-  c1=$(read_theme_color "$dir" color1)
-  c2=$(read_theme_color "$dir" color2)
-  c3=$(read_theme_color "$dir" color3)
-  c4=$(read_theme_color "$dir" color4)
-  c5=$(read_theme_color "$dir" color5)
-  c6=$(read_theme_color "$dir" color6)
+  c1=$(read_theme_color "$dir" red)
+  c2=$(read_theme_color "$dir" green)
+  c3=$(read_theme_color "$dir" yellow)
+  c4=$(read_theme_color "$dir" blue)
+  c5=$(read_theme_color "$dir" magenta)
+  c6=$(read_theme_color "$dir" cyan)
 
   [ -n "$bg" ] && [ -n "$fg" ] || return 1
   accent="${accent:-$c4}"
@@ -253,7 +253,7 @@ mkdir -p "$TUICR_THEMES_DIR"
 
 # Regenerate local themes for every installed omarchy theme without a bundled match,
 # so they stay available for manual `tuicr --theme` use
-for dir in "$HOME/.local/share/omarchy/themes"/*/ "$HOME/.config/omarchy/themes"/*/; do
+for dir in /usr/share/omarchy/themes/*/ "$HOME/.config/omarchy/themes"/*/; do
   [ -f "$dir/colors.toml" ] || continue
   slug=$(basename "$dir")
   [ -n "$(tuicr_bundled "$slug")" ] && continue
@@ -308,18 +308,18 @@ herdr_custom_block() {
   bg=$(read_theme_color "$dir" background)
   fg=$(read_theme_color "$dir" foreground)
   accent=$(read_theme_color "$dir" accent)
-  c1=$(read_theme_color "$dir" color1)
-  c2=$(read_theme_color "$dir" color2)
-  c3=$(read_theme_color "$dir" color3)
-  c4=$(read_theme_color "$dir" color4)
-  c5=$(read_theme_color "$dir" color5)
-  c6=$(read_theme_color "$dir" color6)
+  c1=$(read_theme_color "$dir" red)
+  c2=$(read_theme_color "$dir" green)
+  c3=$(read_theme_color "$dir" yellow)
+  c4=$(read_theme_color "$dir" blue)
+  c5=$(read_theme_color "$dir" magenta)
+  c6=$(read_theme_color "$dir" cyan)
 
   [ -n "$bg" ] && [ -n "$fg" ] || return 1
   accent="${accent:-$c4}"
 
   base="catppuccin"
-  [ -f "$dir/light.mode" ] && base="catppuccin-latte"
+  grep -q '^mode *= *"light"' "$dir/colors.toml" && base="catppuccin-latte"
 
   cat <<EOF
 [theme]
