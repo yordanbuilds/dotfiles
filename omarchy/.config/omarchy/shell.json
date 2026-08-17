@@ -32,6 +32,9 @@
           "id": "omarchy.tray"
         },
         {
+          "id": "yordanbuilds.snooze"
+        },
+        {
           "id": "omarchy.tailscale"
         },
         {
@@ -61,6 +64,13 @@
     "lock": 10800,
     "screensaver": 600
   },
-  "plugins": [],
+  "plugins": [
+    {
+      "id": "yordanbuilds.rig"
+    },
+    {
+      "id": "yordanbuilds.jot"
+    }
+  ],
   "version": 1
 }
