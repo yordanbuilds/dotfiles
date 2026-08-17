@@ -42,3 +42,11 @@ o.bind("SUPER + SHIFT + S", "Screenshot region (clipboard)", "omarchy-capture-sc
 o.bind("SUPER + Q", "Previous workspace", hl.dsp.focus({ workspace = "previous" }))
 o.bind("SUPER + SHIFT + F", "Full screen", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
 o.bind("SHIFT + F11", "Full screen", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
+
+-- >>> rig >>>  Added at your request — yours to edit or remove.
+o.bind("SUPER + R", "Rig", "omarchy-shell shell toggle omarchy.menu '{\"menu\":\"trigger.rig\"}'")
+-- <<< rig <<<
+
+-- >>> jot >>>  Added at your request — yours to edit or remove.
+o.bind("SUPER + N", "Jot", "omarchy-shell shell toggle yordanbuilds.jot '{}'")
+-- <<< jot <<<
