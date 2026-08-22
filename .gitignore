@@ -1,2 +1,6 @@
 fish_variables*
 zed/.config/zed/themes/omazed.json
+herdr/.config/herdr/*.log
+herdr/.config/herdr/.plugins.lock
+herdr/.config/herdr/release-notes.json
+herdr/.local/bin/herdr
