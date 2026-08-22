@@ -35,6 +35,8 @@
   // <<< jot menu <<<
   // >>> rig menu >>>  Managed by rig-menu-sync — do not edit inside.
   "trigger.rig": { "icon": "󰞷", "label": "Rig" },
+  "trigger.rig.stack-apoynt": { "icon": "󰆍", "label": "apoynt", "action": "rig 'apoynt'", "checked": "herdr workspace list 2>/dev/null | grep -qF '\"label\":\"apoynt\"'" },
+  "trigger.rig.stack-rig": { "icon": "󰆍", "label": "rig", "action": "rig 'rig'", "checked": "herdr workspace list 2>/dev/null | grep -qF '\"label\":\"rig\"'" },
   "trigger.rig.new": { "icon": "＋", "label": "New", "action": "rig new-dialog" },
   "trigger.rig.bind-key": { "icon": "󰌌", "label": "Add SUPER+R shortcut", "action": "rig bind-key", "when": "! grep -q '>>> rig >>>' ~/.config/hypr/bindings.lua" },
   // <<< rig menu <<<
