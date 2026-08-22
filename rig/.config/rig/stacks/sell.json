@@ -1,0 +1,32 @@
+{
+  "root": "~/code/sell",
+  "server": {
+    "sail": "./vendor/bin/sail up -d",
+    "vite": {
+      "run": "./vendor/bin/sail npm run build",
+      "after": "sail"
+    },
+    "tunnel": {
+      "run": "cloudflared tunnel run sell-dev",
+      "after": "vite"
+    }
+  },
+  "workers": {
+    "queues": {
+      "run": "./vendor/bin/sail artisan queue:work",
+      "after": "sail"
+    },
+    "scheduler": {
+      "run": "./vendor/bin/sail artisan schedule:work",
+      "after": "sail"
+    }
+  },
+  "stripe": {
+    "listen": {
+      "run": "stripe listen --api-key sk_here --forward-to localhost/stripe/webhook-connect",
+      "ready": "Ready!"
+    }
+  },
+  "claude": "claude",
+  "terminal": null
+}
