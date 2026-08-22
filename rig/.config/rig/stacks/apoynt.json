@@ -1,0 +1,14 @@
+{
+  "root": "~/code/apoynt",
+  "server": {
+    "artisan": "php artisan serve",
+    "vite": "npm run dev"
+  },
+  "workers": {
+    "queues": "php artisan queue:work",
+    "scheduler": "php artisan schedule:work",
+    "reverb": "php artisan reverb:start"
+  },
+  "claude": "claude",
+  "terminal": null
+}
