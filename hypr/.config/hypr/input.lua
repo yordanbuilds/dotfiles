@@ -2,26 +2,25 @@
 -- See https://wiki.hypr.land/Configuring/Basics/Variables/#input
 
 hl.config({
-  input = {
-    -- English + Bulgarian (traditional phonetic); toggle with Alt + Space.
-    kb_layout = "us,bg",
-    kb_variant = ",phonetic",
+    input = {
+        -- English + Bulgarian (traditional phonetic); toggle with Left Alt + Space.
+        kb_layout = "us,bg",
+        kb_variant = ",phonetic",
 
-    -- Compose key on Caps Lock.
-    kb_options = "compose:caps,grp:alt_space_toggle",
+        kb_options = "compose:caps,grp:alt_space_toggle,altwin:swap_ralt_rwin",
 
-    -- Faster scrolling.
-    scroll_factor = 2.0,
+        -- Faster scrolling.
+        scroll_factor = 2.0,
 
-    -- Faster keyboard repeat.
-    repeat_rate = 40,
-    repeat_delay = 600,
+        -- Faster keyboard repeat.
+        repeat_rate = 40,
+        repeat_delay = 600,
 
-    touchpad = {
-      -- Slower touchpad scrolling.
-      scroll_factor = 0.4,
+        touchpad = {
+            -- Slower touchpad scrolling.
+            scroll_factor = 0.4,
+        },
     },
-  },
 })
 
 -- App-specific touchpad scroll speeds.
