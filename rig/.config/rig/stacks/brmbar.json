@@ -1,0 +1,13 @@
+{
+  "root": "~/code/brmbar",
+  "server": {
+    "artisan": "php artisan serve",
+    "vite": "npm run dev"
+  },
+  "workers": {
+    "queues": "php artisan queue:work",
+    "scheduler": "php artisan schedule:work"
+  },
+  "claude": "claude",
+  "terminal": null
+}
