@@ -2,12 +2,13 @@
   "root": "~/code/apoynt",
   "server": {
     "artisan": "php artisan serve",
-    "vite": "npm run dev"
+    "vite": "npm run dev",
+    "tunnel": "cloudflared tunnel --config ~/.cloudflared/apoynt-dev.yml run apoynt-dev"
   },
   "workers": {
     "queues": "php artisan queue:work",
     "scheduler": "php artisan schedule:work",
-    "reverb": "php artisan reverb:start"
+    "reverb": "php artisan reverb:start --port=8081"
   },
   "claude": "claude",
   "terminal": null
