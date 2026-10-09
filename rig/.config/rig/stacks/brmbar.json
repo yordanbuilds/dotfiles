@@ -5,7 +5,7 @@
     "vite": "npm run dev"
   },
   "workers": {
-    "queues": "php artisan queue:work",
+    "queues": "php artisan queue:listen",
     "scheduler": "php artisan schedule:work"
   },
   "claude": "claude",

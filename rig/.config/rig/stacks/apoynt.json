@@ -6,7 +6,7 @@
     "tunnel": "cloudflared tunnel --config ~/.cloudflared/apoynt-dev.yml run apoynt-dev"
   },
   "workers": {
-    "queues": "php artisan queue:work",
+    "queues": "php artisan queue:listen",
     "scheduler": "php artisan schedule:work",
     "reverb": "php artisan reverb:start --port=8081"
   },

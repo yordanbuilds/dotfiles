@@ -13,7 +13,7 @@
   },
   "workers": {
     "queues": {
-      "run": "./vendor/bin/sail artisan queue:work",
+      "run": "./vendor/bin/sail artisan queue:listen",
       "after": "sail"
     },
     "scheduler": {
@@ -23,7 +23,7 @@
   },
   "stripe": {
     "listen": {
-      "run": "stripe listen --api-key sk_here --forward-to localhost/stripe/webhook-connect",
+      "run": "stripe listen --api-key $(grep '^STRIPE_SECRET=' .env | cut -d= -f2) --all-snapshot --forward-to localhost/stripe/webhook-connect",
       "ready": "Ready!"
     }
   },
