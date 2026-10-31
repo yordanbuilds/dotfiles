@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# The RX 580's VCE encoder hangs the GPU under gpu-screen-recorder (choppy
+# recordings, then a full freeze), so encode on the CPU instead. Runs Omarchy's
+# stock recorder with only the encoder swapped, so upstream updates still apply.
+#
+# Usage: screenrecord-cpu [--webcam-picker | <omarchy-capture-screenrecording args...>]
+
+self=$(realpath "$0")
+
+if [[ $1 == "--webcam-picker" ]]; then
+  src=$(which omarchy-capture-screenrecording-with-webcam)
+  exec bash -c "$(sed "s|exec omarchy-capture-screenrecording|exec $self|" "$src")" "$src"
+fi
+
+src=$(which omarchy-capture-screenrecording)
+
+# Refuse to record on the GPU encoder if upstream changed the invocation
+if ! grep -q -- '-fallback-cpu-encoding yes' "$src"; then
+  omarchy-notification-send -u critical -t 5000 "screenrecord-cpu" "Omarchy's recorder changed; CPU encoding patch no longer applies"
+  exit 1
+fi
+
+exec bash -c "$(sed 's/-fallback-cpu-encoding yes/-encoder cpu/' "$src")" "$src" "$@"
