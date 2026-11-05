@@ -13,6 +13,7 @@ hl.unbind("SUPER + X")              -- was: Universal cut -> X
 hl.unbind("SUPER + SHIFT + X")      -- was: X -> X Post
 hl.unbind("SUPER + SHIFT + B")      -- was: Browser -> Browser (private)
 hl.unbind("SUPER + SHIFT + RETURN") -- was: Browser -> app launcher
+hl.unbind("SUPER + Q")              -- was: Close window (SUPER + W still closes) -> Previous workspace
 
 -- Applications
 o.bind("SUPER + F", "File manager", { omarchy = "nautilus" })
