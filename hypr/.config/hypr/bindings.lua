@@ -50,3 +50,10 @@ o.bind("SUPER + R", "Rig", "omarchy-shell shell toggle omarchy.menu '{\"menu\":\
 -- >>> jot >>>  Added at your request — yours to edit or remove.
 o.bind("SUPER + N", "Jot", "omarchy-shell shell toggle yordanbuilds.jot '{}'")
 -- <<< jot <<<
+
+-- Dictation keys from before Alt + Space and Right Alt became the defaults.
+-- Remove these lines to give the keys back to applications.
+if o.dictation_installed and o.dictation_installed() then
+  o.bind("SUPER + CTRL + X", "Toggle dictation", "omarchy-dictation toggle")
+  o.bind_hold("F9", "Start dictation (push-to-talk)", "omarchy-dictation start", "Stop dictation (push-to-talk)", "omarchy-dictation stop")
+end

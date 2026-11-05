@@ -33,6 +33,11 @@
   "trigger.jot.inbox": { "icon": "󰮒", "label": "Open inbox", "action": "/home/void/.config/omarchy/plugins/yordanbuilds.jot/bin/jot-open-inbox" },
   "trigger.jot.bind-key": { "icon": "󰌌", "label": "Add SUPER+N shortcut", "action": "/home/void/.config/omarchy/plugins/yordanbuilds.jot/bin/jot-bind-key", "when": "! grep -q '>>> jot >>>' ~/.config/hypr/bindings.lua" },
   // <<< jot menu <<<
+  // Screen recording encodes on the CPU: the RX 580's VCE encoder hangs the GPU
+  "trigger.capture.screenrecord.no-audio": { "action": "/home/void/.config/omarchy/bin/screenrecord-cpu" },
+  "trigger.capture.screenrecord.desktop-audio": { "action": "/home/void/.config/omarchy/bin/screenrecord-cpu --with-desktop-audio" },
+  "trigger.capture.screenrecord.microphone": { "action": "/home/void/.config/omarchy/bin/screenrecord-cpu --with-desktop-audio --with-microphone-audio" },
+  "trigger.capture.screenrecord.webcam": { "action": "/home/void/.config/omarchy/bin/screenrecord-cpu --webcam-picker" },
   // >>> rig menu >>>  Managed by rig-menu-sync — do not edit inside.
   "trigger.rig": { "icon": "󰞷", "label": "Rig" },
   "trigger.rig.stack-apoynt": { "icon": "󰆍", "label": "apoynt", "action": "rig 'apoynt'", "checked": "herdr workspace list 2>/dev/null | grep -qF '\"label\":\"apoynt\"'" },
@@ -42,9 +47,4 @@
   "trigger.rig.new": { "icon": "＋", "label": "New", "action": "rig new-dialog" },
   "trigger.rig.bind-key": { "icon": "󰌌", "label": "Add SUPER+R shortcut", "action": "rig bind-key", "when": "! grep -q '>>> rig >>>' ~/.config/hypr/bindings.lua" },
   // <<< rig menu <<<
-  // Screen recording encodes on the CPU: the RX 580's VCE encoder hangs the GPU
-  "trigger.capture.screenrecord.no-audio": { "action": "/home/void/.config/omarchy/bin/screenrecord-cpu" },
-  "trigger.capture.screenrecord.desktop-audio": { "action": "/home/void/.config/omarchy/bin/screenrecord-cpu --with-desktop-audio" },
-  "trigger.capture.screenrecord.microphone": { "action": "/home/void/.config/omarchy/bin/screenrecord-cpu --with-desktop-audio --with-microphone-audio" },
-  "trigger.capture.screenrecord.webcam": { "action": "/home/void/.config/omarchy/bin/screenrecord-cpu --webcam-picker" },
 }
