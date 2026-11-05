@@ -6,9 +6,16 @@
     "tunnel": "cloudflared tunnel --config ~/.cloudflared/apoynt-dev.yml run apoynt-dev"
   },
   "workers": {
-    "queues": "php artisan queue:listen",
+    "queues": "php artisan queue:listen --queue=ai,outbound,default --tries=1 --timeout=0",
     "scheduler": "php artisan schedule:work",
     "reverb": "php artisan reverb:start --port=8081"
+  },
+  "stripe": {
+    "listen": {
+      "run": "stripe listen --api-key $(grep '^STRIPE_SECRET=' .env | cut -d= -f2) --events customer.subscription.created,customer.subscription.updated,customer.subscription.deleted,customer.updated,customer.deleted,payment_method.automatically_updated,invoice.paid --forward-to localhost:8000/webhooks/stripe",
+      "after": "artisan",
+      "ready": "Ready!"
+    }
   },
   "claude": "claude",
   "terminal": null
