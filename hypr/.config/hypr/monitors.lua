@@ -8,6 +8,14 @@ local omarchy_gdk_scale = 2
 local omarchy_monitor_scale = 1.25
 
 hl.env("GDK_SCALE", tostring(omarchy_gdk_scale))
+
+-- Variable refresh rate (FreeSync) only for fullscreen apps (games), so the desktop
+-- doesn't flicker. Needs "Variable Refresh Rate" on in the monitor's Gaming OSD.
+hl.config({
+  misc = {
+    vrr = 2,
+  },
+})
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = omarchy_monitor_scale })
 hl.monitor({ output = "DP-2", mode = "preferred", position = "auto", scale = 1.25 })
 
