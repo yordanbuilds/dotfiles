@@ -4,10 +4,10 @@
     "layout": {
       "center": [
         {
+          "id": "omarchy.clock",
           "birthYear": 0,
           "format": "ddd d MMM HH:mm",
           "formatAlt": "d MMMM 'W'ww yyyy",
-          "id": "omarchy.clock",
           "lifeExpectancy": 70,
           "verticalFormat": "HH\n—\nmm"
         }
