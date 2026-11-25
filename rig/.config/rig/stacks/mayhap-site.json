@@ -1,0 +1,14 @@
+{
+  "root": "~/code/mayhap-site",
+  "server": {
+    "artisan": "php artisan serve",
+    "vite": "npm run build -- --watch",
+    "tunnel": "cloudflared tunnel --config ~/.cloudflared/mayhap-dev.yml run mayhap-dev"
+  },
+  "workers": {
+    "queues": "php artisan queue:listen --tries=1 --timeout=0",
+    "scheduler": "php artisan schedule:work"
+  },
+  "claude": "claude",
+  "terminal": null
+}
