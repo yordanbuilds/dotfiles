@@ -21,7 +21,15 @@ o.bind("SUPER + B", "Browser", { omarchy = "browser" })
 o.bind("SUPER + SHIFT + B", "Browser (private)", { omarchy = "browser --private" })
 o.bind("SUPER + P", "PhpStorm",
     { launch = os.getenv("HOME") .. "/.local/share/JetBrains/Toolbox/apps/phpstorm/bin/phpstorm.sh" })
-o.bind("SUPER + SHIFT + RETURN", "Omarchy menu", "omarchy-menu toggle")
+-- Old SUPER + SHIFT + RETURN binding, replaced by the omacast launcher below:
+-- o.bind("SUPER + SHIFT + RETURN", "Omarchy menu", "omarchy-menu toggle")
+o.bind("SUPER + SHIFT + RETURN", "omacast launcher", hl.dsp.global("omacast:toggle"), { submap_universal = true })
+-- While omacast is open it switches Hyprland to this submap, so Super+J/K reach the launcher.
+hl.define_submap("omacast", function()
+  hl.bind("SUPER + F24", hl.dsp.no_op()) -- a submap needs one bind to exist
+end)
+-- Blur behind the launcher under Glassy Windows.
+hl.layer_rule({ match = { namespace = "^omacast$" }, blur = true, ignore_alpha = 0.3 })
 
 -- Web apps
 o.bind("SUPER + G", "GitHub", { webapp = "https://github.com" })
